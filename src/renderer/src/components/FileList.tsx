@@ -63,24 +63,20 @@ export function FileList({ onSelectionChange }: FileListProps): React.JSX.Elemen
         setSelectedFiles(new Set())
     }, [])
 
-    // 处理文件点击
+    // 处理文件点击 - 点击切换选中状态
     const handleFileClick = useCallback(
-        (file: FileItem, e: React.MouseEvent) => {
-            if (e.ctrlKey || e.metaKey) {
-                // Ctrl+点击：切换选中
-                setSelectedFiles((prev) => {
-                    const newSet = new Set(prev)
-                    if (newSet.has(file.id)) {
-                        newSet.delete(file.id)
-                    } else {
-                        newSet.add(file.id)
-                    }
-                    return newSet
-                })
-            } else {
-                // 单击：单选
-                setSelectedFiles(new Set([file.id]))
-            }
+        (file: FileItem) => {
+            setSelectedFiles((prev) => {
+                const newSet = new Set(prev)
+                if (newSet.has(file.id)) {
+                    // 已选中，取消选中
+                    newSet.delete(file.id)
+                } else {
+                    // 未选中，添加选中
+                    newSet.add(file.id)
+                }
+                return newSet
+            })
         },
         []
     )
@@ -121,7 +117,7 @@ export function FileList({ onSelectionChange }: FileListProps): React.JSX.Elemen
                     <div
                         key={file.id}
                         className={`file-item ${selectedFiles.has(file.id) ? 'selected' : ''}`}
-                        onClick={(e) => handleFileClick(file, e)}
+                        onClick={() => handleFileClick(file)}
                         onDoubleClick={() => handleFileDoubleClick(file)}
                     >
                         <span className="file-item-icon">{file.icon}</span>
