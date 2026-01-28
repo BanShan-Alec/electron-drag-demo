@@ -1,4 +1,4 @@
-import { useState, useCallback, DragEvent } from 'react'
+import { useState, useCallback, DragEvent, useEffect } from 'react'
 
 interface DragDropTestProps {
     selectedPaths: string[]
@@ -9,15 +9,48 @@ interface LogItem {
     message: string
 }
 
+// 跨窗口拖拽数据
+interface CrossWindowDragData {
+    sourceWindowId: string
+    files: string[]
+}
+
 export function DragDropTest({ selectedPaths }: DragDropTestProps): React.JSX.Element {
     const [dropLogs, setDropLogs] = useState<LogItem[]>([])
     const [isDragging, setIsDragging] = useState(false)
+    // 存储跨窗口拖拽的文件信息
+    const [crossWindowDragData, setCrossWindowDragData] = useState<CrossWindowDragData | null>(null)
 
     // 添加日志
     const addLog = useCallback((message: string) => {
         const time = new Date().toLocaleTimeString()
         setDropLogs((prev) => [{ time, message }, ...prev.slice(0, 9)])
     }, [])
+
+    // 监听跨窗口拖拽事件
+    useEffect(() => {
+        // 监听来自其他窗口的拖拽进入事件
+        const unsubscribeDragEnter = window.api.on('drag-enter', (data: unknown) => {
+            const dragData = data as CrossWindowDragData
+            console.log('[DragDropTest] Received drag-enter from window:', dragData.sourceWindowId)
+            console.log('[DragDropTest] Files:', dragData.files)
+            setCrossWindowDragData(dragData)
+            setIsDragging(true)
+            addLog(`收到来自窗口 ${dragData.sourceWindowId.slice(-6)} 的拖拽: ${dragData.files.length} 个文件`)
+        })
+
+        // 监听拖拽离开事件
+        const unsubscribeDragLeave = window.api.on('drag-leave', () => {
+            console.log('[DragDropTest] Received drag-leave')
+            setCrossWindowDragData(null)
+            setIsDragging(false)
+        })
+
+        return () => {
+            unsubscribeDragEnter()
+            unsubscribeDragLeave()
+        }
+    }, [addLog])
 
     // 处理拖拽开始（跨应用）
     const handleDragStart = useCallback(
@@ -69,15 +102,35 @@ export function DragDropTest({ selectedPaths }: DragDropTestProps): React.JSX.El
 
             const droppedFiles = e.dataTransfer.files
             if (droppedFiles.length > 0) {
+                // 从外部应用拖入的文件
                 const fileNames = Array.from(droppedFiles)
                     .map((f) => f.name)
                     .join(', ')
                 addLog(`从外部拖入: ${droppedFiles.length} 个文件 - ${fileNames}`)
+            } else if (crossWindowDragData) {
+                // 跨窗口拖拽的文件
+                const { sourceWindowId, files } = crossWindowDragData
+                addLog(`从窗口 ${sourceWindowId.slice(-6)} 接收: ${files.length} 个文件`)
+
+                // 显示文件列表
+                files.slice(0, 5).forEach((filePath) => {
+                    const fileName = filePath.split('\\').pop() || filePath.split('/').pop() || filePath
+                    addLog(`  📄 ${fileName}`)
+                })
+                if (files.length > 5) {
+                    addLog(`  ... 还有 ${files.length - 5} 个文件`)
+                }
+
+                // 通知主进程处理拖拽放下
+                window.api.dragDrop(sourceWindowId, files, 'current-path')
+
+                // 清空跨窗口拖拽数据
+                setCrossWindowDragData(null)
             } else {
-                addLog('收到拖拽放下事件（跨窗口）')
+                addLog('收到拖拽放下事件（无数据）')
             }
         },
-        [addLog]
+        [addLog, crossWindowDragData]
     )
 
     return (
