@@ -327,25 +327,36 @@ body {
     align-items: center;
     justify-content: center;
     padding: 40px;
+    min-height: 150px;
     background: var(--bg-color);
     border: 2px dashed var(--border-color);
     border-radius: var(--radius);
     transition: all 0.2s ease;
+    /* 确保拖拽事件只在容器上触发 */
+    position: relative;
+}
+
+/* 子元素不捕获鼠标事件，避免触发 dragLeave */
+.drop-target>* {
+    pointer-events: none;
 }
 
 .drop-target.drag-over {
     border-color: var(--success-color);
     background: rgba(40, 167, 69, 0.1);
+    border-width: 3px;
+    transform: scale(1.02);
 }
 
 .drop-icon {
-    font-size: 36px;
-    margin-bottom: 8px;
+    font-size: 48px;
+    margin-bottom: 12px;
 }
 
 .drop-text {
-    font-size: 14px;
+    font-size: 15px;
     color: var(--text-muted);
+    font-weight: 500;
 }
 
 .drop-log {
