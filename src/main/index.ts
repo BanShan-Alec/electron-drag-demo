@@ -1,8 +1,9 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, nativeImage } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { windowManager } from './windowManager'
+import { existsSync } from 'fs'
 
 /**
  * 创建新窗口
@@ -86,17 +87,67 @@ function setupIPC(): void {
   ipcMain.on('ondragstart', (event, filePaths: string | string[]) => {
     console.log('[Drag] Starting drag with files:', filePaths)
 
-    // 确保 filePaths 是数组
-    const files = Array.isArray(filePaths) ? filePaths : [filePaths]
+    try {
+      // 确保 filePaths 是数组
+      const files = Array.isArray(filePaths) ? filePaths : [filePaths]
 
-    // 创建拖拽图标
-    const iconPath = join(__dirname, '../../resources/icon.png')
+      // // 过滤掉不存在的文件
+      // const validFiles = files.filter((f) => {
+      //   const exists = existsSync(f)
+      //   if (!exists) {
+      //     console.warn('[Drag] File does not exist:', f)
+      //   }
+      //   return exists
+      // })
 
-    event.sender.startDrag({
-      file: files[0],  // 即使拖拽多个文件，file 属性仍是必需的
-      files: files,
-      icon: iconPath
-    })
+      // if (validFiles.length === 0) {
+      //   console.error('[Drag] No valid files to drag')
+      //   return
+      // }
+
+      // 创建拖拽图标 - 使用 nativeImage 而不是直接传路径
+      // 这是解决 Windows 上拖拽崩溃的关键
+      let dragIcon: Electron.NativeImage
+
+      // 尝试多个可能的图标路径
+      const possibleIconPaths = [
+        icon, // 通过 asset import 导入的路径
+        join(__dirname, '../../resources/icon.png'),
+        join(app.getAppPath(), 'resources/icon.png'),
+        join(process.resourcesPath || '', 'icon.png')
+      ]
+
+      for (const iconPath of possibleIconPaths) {
+        if (iconPath && existsSync(iconPath)) {
+          console.log('[Drag] Using icon from:', iconPath)
+          dragIcon = nativeImage.createFromPath(iconPath)
+          if (!dragIcon.isEmpty()) {
+            break
+          }
+        }
+      }
+
+      // 如果没有找到图标，创建一个空的占位图标
+      if (!dragIcon! || dragIcon.isEmpty()) {
+        console.warn('[Drag] No valid icon found, creating placeholder')
+        // 创建一个 32x32 的透明图标
+        dragIcon = nativeImage.createEmpty()
+      }
+
+      // 缩放图标到合适大小（Windows 推荐 32x32 或更小）
+      const resizedIcon = dragIcon.resize({ width: 32, height: 32 })
+
+      console.log('[Drag] Starting native drag with', files.length, 'files')
+
+      event.sender.startDrag({
+        file: files[0], // 即使拖拽多个文件，file 属性仍是必需的
+        files: files,
+        icon: resizedIcon
+      })
+    } catch (error) {
+      console.error('[Drag] Error during startDrag:', error)
+      // 不让错误崩溃应用
+    }
   })
 
   // 跨窗口拖拽开始
