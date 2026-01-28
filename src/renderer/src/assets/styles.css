@@ -1,0 +1,463 @@
+/* ===== CSS Variables ===== */
+:root {
+    --primary-color: #4a90d9;
+    --primary-hover: #357abd;
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --bg-color: #1e1e2e;
+    --bg-secondary: #2a2a3e;
+    --bg-tertiary: #363650;
+    --text-color: #e0e0e0;
+    --text-muted: #888;
+    --border-color: #404050;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --radius: 8px;
+    --radius-sm: 4px;
+}
+
+/* ===== Reset & Base ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+    background: var(--bg-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    line-height: 1.5;
+}
+
+/* ===== App Container ===== */
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* ===== Toolbar ===== */
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    -webkit-app-region: drag;
+}
+
+.toolbar-left {
+    display: flex;
+    gap: 20px;
+    -webkit-app-region: no-drag;
+}
+
+.toolbar-right {
+    display: flex;
+    gap: 10px;
+    -webkit-app-region: no-drag;
+}
+
+.window-id,
+.window-count {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.window-id span,
+.window-count span {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+/* ===== Buttons ===== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: var(--bg-tertiary);
+    color: var(--text-color);
+}
+
+.btn:hover {
+    background: var(--border-color);
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-hover);
+}
+
+.btn-secondary {
+    background: var(--secondary-color);
+    color: white;
+}
+
+.btn-sm {
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+.btn-icon {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* ===== Memory Panel ===== */
+.memory-panel {
+    padding: 15px 20px;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.memory-panel h3 {
+    font-size: 14px;
+    margin-bottom: 10px;
+    color: var(--text-muted);
+}
+
+.memory-stats {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.stat-value {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.process-details {
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* ===== Main Content ===== */
+.main-content {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* ===== File Section ===== */
+.file-section {
+    background: var(--bg-secondary);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+}
+
+.file-section h3 {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.file-count {
+    color: var(--text-muted);
+    font-weight: normal;
+}
+
+.file-controls {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.file-list {
+    flex: 1;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background: var(--bg-color);
+}
+
+/* ===== File Item ===== */
+.file-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-color);
+    transition: background 0.15s ease;
+    user-select: none;
+}
+
+.file-item:hover {
+    background: var(--bg-tertiary);
+}
+
+.file-item.selected {
+    background: rgba(74, 144, 217, 0.2);
+    border-left: 3px solid var(--primary-color);
+}
+
+.file-item-icon {
+    font-size: 18px;
+}
+
+.file-item-name {
+    flex: 1;
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.file-item-check {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--border-color);
+    border-radius: 3px;
+    transition: all 0.15s ease;
+}
+
+.file-item.selected .file-item-check {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+/* ===== Test Section ===== */
+.test-section {
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.test-card {
+    background: var(--bg-secondary);
+    border-radius: var(--radius);
+    padding: 15px;
+    border: 1px solid var(--border-color);
+}
+
+.test-card h4 {
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.test-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+}
+
+/* ===== Drag Source ===== */
+.drag-source {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-color));
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius);
+    cursor: grab;
+    transition: all 0.2s ease;
+}
+
+.drag-source:hover {
+    border-color: var(--primary-color);
+    background: linear-gradient(135deg, rgba(74, 144, 217, 0.1), var(--bg-color));
+}
+
+.drag-source:active {
+    cursor: grabbing;
+}
+
+.drag-icon {
+    font-size: 32px;
+    margin-bottom: 8px;
+}
+
+.drag-text {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.drag-count {
+    font-size: 12px;
+    color: var(--primary-color);
+    margin-top: 5px;
+}
+
+/* ===== Drop Target ===== */
+.drop-target {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    background: var(--bg-color);
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius);
+    transition: all 0.2s ease;
+}
+
+.drop-target.drag-over {
+    border-color: var(--success-color);
+    background: rgba(40, 167, 69, 0.1);
+}
+
+.drop-icon {
+    font-size: 36px;
+    margin-bottom: 8px;
+}
+
+.drop-text {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.drop-log {
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--text-muted);
+    max-height: 100px;
+    overflow-y: auto;
+}
+
+/* ===== IPC Test ===== */
+.ipc-test {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.input {
+    flex: 1;
+    padding: 8px 12px;
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-color);
+    font-size: 14px;
+}
+
+.input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.message-log {
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 10px;
+    max-height: 120px;
+    overflow-y: auto;
+    font-size: 12px;
+}
+
+.log-placeholder {
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.log-item {
+    padding: 4px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.log-item:last-child {
+    border-bottom: none;
+}
+
+.log-time {
+    color: var(--text-muted);
+    margin-right: 8px;
+}
+
+.log-from {
+    color: var(--primary-color);
+    margin-right: 8px;
+}
+
+/* ===== Performance Test ===== */
+.perf-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.perf-result {
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 10px;
+    font-size: 12px;
+    min-height: 60px;
+}
+
+.perf-result.success {
+    color: var(--success-color);
+}
+
+.perf-result.warning {
+    color: var(--warning-color);
+}
+
+/* ===== Status Bar ===== */
+.status-bar {
+    padding: 8px 20px;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* ===== Scrollbar ===== */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-color);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
