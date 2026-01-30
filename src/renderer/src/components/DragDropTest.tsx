@@ -36,7 +36,9 @@ export function DragDropTest({ selectedPaths }: DragDropTestProps): React.JSX.El
             console.log('[DragDropTest] Files:', dragData.files)
             setCrossWindowDragData(dragData)
             setIsDragging(true)
-            addLog(`收到来自窗口 ${dragData.sourceWindowId.slice(-6)} 的拖拽: ${dragData.files.length} 个文件`)
+            addLog(
+                `收到来自窗口 ${dragData.sourceWindowId.slice(-6)} 的拖拽: ${dragData.files.length} 个文件`
+            )
         })
 
         // 监听拖拽离开事件
@@ -138,7 +140,9 @@ export function DragDropTest({ selectedPaths }: DragDropTestProps): React.JSX.El
             {/* 跨应用拖拽测试 */}
             <div className="test-card">
                 <h4>🎯 跨应用拖拽测试</h4>
-                <p className="test-desc">选中左侧文件后，从下方区域拖拽到桌面或文件管理器</p>
+                <p className="test-desc">
+                    选中左侧文件后，拖拽下方区域到桌面或文件管理器（触屏设备直接拖拽即可）
+                </p>
                 <div
                     className="drag-source"
                     draggable={true}

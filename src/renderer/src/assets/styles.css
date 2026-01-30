@@ -293,15 +293,12 @@ body {
     border-radius: var(--radius);
     cursor: grab;
     transition: all 0.2s ease;
+    touch-action: none;
 }
 
 .drag-source:hover {
     border-color: var(--primary-color);
     background: linear-gradient(135deg, rgba(74, 144, 217, 0.1), var(--bg-color));
-}
-
-.drag-source:active {
-    cursor: grabbing;
 }
 
 .drag-icon {

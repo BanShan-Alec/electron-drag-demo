@@ -5,6 +5,10 @@ import icon from '../../resources/icon.png?asset'
 import { windowManager } from './windowManager'
 import { existsSync } from 'fs'
 
+// 强制让 is.dev 一直返回 true（打包后也表现为开发模式）
+// 这样 optimizer.watchWindowShortcuts 会启用 F12 打开 DevTools 等功能
+;(is as { dev: boolean }).dev = true
+
 /**
  * 创建新窗口
  */
@@ -208,6 +212,8 @@ app.whenReady().then(() => {
   electronApp.setAppUserModelId('com.electron')
 
   app.on('browser-window-created', (_, window) => {
+    // 第二个参数设为 true，让快捷键在生产模式下也生效
+    // is.dev = true 后，optimizer 会自动处理 F12 打开 DevTools
     optimizer.watchWindowShortcuts(window)
   })
 
